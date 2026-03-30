@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
 import { Heart, ShoppingCart, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import type { DBProduct } from "@/hooks/useProducts";
 
-const ProductCard = ({ product, index = 0 }: { product: Product; index?: number }) => {
+const ProductCard = ({ product, index = 0 }: { product: DBProduct; index?: number }) => {
   const { addToCart, toggleWishlist, wishlist } = useCart();
   const isWished = wishlist.includes(product.id);
-  const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
+  const price = Number(product.price);
+  const originalPrice = product.original_price ? Number(product.original_price) : null;
+  const discount = originalPrice ? Math.round((1 - price / originalPrice) * 100) : 0;
+  const categoryName = product.categories?.name || "";
 
   return (
     <motion.div
@@ -31,9 +34,10 @@ const ProductCard = ({ product, index = 0 }: { product: Product; index?: number 
 
       <Link to={`/product/${product.id}`} className="block relative overflow-hidden aspect-square">
         <img
-          src={product.image}
+          src={product.image_url || "/placeholder.svg"}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-card/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
           <span className="flex items-center gap-1 text-xs font-medium text-foreground bg-card/80 backdrop-blur-md px-3 py-1.5 rounded-full">
@@ -43,23 +47,23 @@ const ProductCard = ({ product, index = 0 }: { product: Product; index?: number 
       </Link>
 
       <div className="p-4">
-        <p className="text-[10px] uppercase tracking-widest text-primary font-semibold mb-1">{product.category}</p>
+        <p className="text-[10px] uppercase tracking-widest text-primary font-semibold mb-1">{categoryName}</p>
         <Link to={`/product/${product.id}`}>
           <h3 className="font-medium text-sm leading-snug line-clamp-2 hover:text-primary transition-colors">{product.name}</h3>
         </Link>
         <div className="flex items-center gap-1 mt-2">
           <div className="flex">
             {[...Array(5)].map((_, i) => (
-              <span key={i} className={`text-xs ${i < Math.floor(product.rating) ? "text-primary" : "text-muted"}`}>★</span>
+              <span key={i} className={`text-xs ${i < Math.floor(product.rating || 0) ? "text-primary" : "text-muted"}`}>★</span>
             ))}
           </div>
-          <span className="text-[10px] text-muted-foreground">({product.reviews})</span>
+          <span className="text-[10px] text-muted-foreground">({product.reviews_count || 0})</span>
         </div>
         <div className="flex items-center justify-between mt-3">
           <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-lg">₹{product.price.toLocaleString()}</span>
-            {product.originalPrice && (
-              <span className="text-xs text-muted-foreground line-through">₹{product.originalPrice.toLocaleString()}</span>
+            <span className="font-display font-bold text-lg">₹{price.toLocaleString()}</span>
+            {originalPrice && (
+              <span className="text-xs text-muted-foreground line-through">₹{originalPrice.toLocaleString()}</span>
             )}
             {discount > 0 && (
               <span className="text-[10px] font-bold text-green-400">{discount}% OFF</span>

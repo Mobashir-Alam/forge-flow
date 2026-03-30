@@ -26,10 +26,10 @@ const Cart = () => {
           <div className="lg:col-span-2 space-y-4">
             {items.map(item => (
               <motion.div key={item.product.id} layout className="flex gap-4 p-4 rounded-2xl glass border border-border/30">
-                <img src={item.product.image} alt={item.product.name} className="w-24 h-24 rounded-xl object-cover" />
+                <img src={item.product.image_url || "/placeholder.svg"} alt={item.product.name} className="w-24 h-24 rounded-xl object-cover" />
                 <div className="flex-1 min-w-0">
                   <Link to={`/product/${item.product.id}`} className="font-medium hover:text-primary transition-colors line-clamp-1">{item.product.name}</Link>
-                  <p className="text-xs text-muted-foreground mt-1">{item.product.category}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{item.product.categories?.name || ""}</p>
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center gap-2">
                       <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-border transition-colors"><Minus className="w-3 h-3" /></button>
@@ -37,7 +37,7 @@ const Cart = () => {
                       <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-border transition-colors"><Plus className="w-3 h-3" /></button>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="font-display font-bold">₹{(item.product.price * item.quantity).toLocaleString()}</span>
+                      <span className="font-display font-bold">₹{(Number(item.product.price) * item.quantity).toLocaleString()}</span>
                       <button onClick={() => removeFromCart(item.product.id)} className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </div>
@@ -46,7 +46,6 @@ const Cart = () => {
             ))}
             <button onClick={clearCart} className="text-sm text-destructive hover:underline">Clear Cart</button>
           </div>
-
           <div className="lg:col-span-1">
             <div className="sticky top-28 p-6 rounded-2xl glass border border-border/30 space-y-4">
               <h3 className="font-display font-bold text-lg">Order Summary</h3>

@@ -3,22 +3,68 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, CreditCard, Banknote, Smartphone } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", phone: "", address: "", city: "", pincode: "" });
+  const [form, setForm] = useState({
+    name: profile?.display_name || "",
+    phone: profile?.phone || "",
+    address: profile?.address || "",
+    city: profile?.city || "",
+    pincode: profile?.pincode || "",
+  });
   const [payment, setPayment] = useState("cod");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.phone || !form.address || !form.city) {
       toast({ title: "Please fill all fields", variant: "destructive" });
       return;
     }
-    clearCart();
-    navigate("/order-success");
+    if (!user) {
+      toast({ title: "Please login to place order", variant: "destructive" });
+      navigate("/login");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const { data: order, error: orderError } = await supabase.from("orders").insert({
+        user_id: user.id,
+        total_amount: totalPrice,
+        shipping_name: form.name,
+        shipping_phone: form.phone,
+        shipping_address: form.address,
+        shipping_city: form.city,
+        shipping_pincode: form.pincode,
+        payment_method: payment,
+      }).select().single();
+
+      if (orderError) throw orderError;
+
+      const orderItems = items.map(item => ({
+        order_id: order.id,
+        product_id: item.product.id,
+        product_name: item.product.name,
+        quantity: item.quantity,
+        unit_price: Number(item.product.price),
+      }));
+
+      const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
+      if (itemsError) throw itemsError;
+
+      clearCart();
+      navigate("/order-success");
+    } catch (err: any) {
+      toast({ title: "Order failed", description: err.message, variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (items.length === 0) return (
@@ -38,7 +84,6 @@ const Checkout = () => {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3 space-y-6">
-            {/* Shipping */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-2xl glass border border-border/30">
               <h2 className="font-display font-bold text-lg mb-4">Shipping Details</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -57,7 +102,6 @@ const Checkout = () => {
               </div>
             </motion.div>
 
-            {/* Payment */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="p-6 rounded-2xl glass border border-border/30">
               <h2 className="font-display font-bold text-lg mb-4">Payment Method</h2>
               <div className="space-y-3">
@@ -88,12 +132,12 @@ const Checkout = () => {
               <div className="space-y-3 max-h-60 overflow-y-auto scrollbar-hide">
                 {items.map(item => (
                   <div key={item.product.id} className="flex gap-3">
-                    <img src={item.product.image} alt={item.product.name} className="w-12 h-12 rounded-lg object-cover" />
+                    <img src={item.product.image_url || "/placeholder.svg"} alt={item.product.name} className="w-12 h-12 rounded-lg object-cover" />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs truncate">{item.product.name}</p>
                       <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
-                    <span className="text-xs font-medium">₹{(item.product.price * item.quantity).toLocaleString()}</span>
+                    <span className="text-xs font-medium">₹{(Number(item.product.price) * item.quantity).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
@@ -104,8 +148,8 @@ const Checkout = () => {
               <div className="border-t border-border/40 pt-4 flex justify-between font-display font-bold text-lg">
                 <span>Total</span><span className="gradient-text">₹{totalPrice.toLocaleString()}</span>
               </div>
-              <button type="submit" className="w-full py-3.5 rounded-xl gradient-primary text-primary-foreground font-semibold shadow-glow btn-ripple">
-                Place Order
+              <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl gradient-primary text-primary-foreground font-semibold shadow-glow btn-ripple disabled:opacity-50">
+                {submitting ? "Placing Order..." : "Place Order"}
               </button>
             </div>
           </div>
