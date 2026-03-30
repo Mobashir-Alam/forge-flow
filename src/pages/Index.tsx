@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Shield, Truck, Clock, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import ProductCard from "@/components/ProductCard";
-import { products, categories, testimonials, brands } from "@/data/products";
+import { useProducts, useCategories } from "@/hooks/useProducts";
+import { testimonials, brands } from "@/data/products";
 
 const stats = [
   { value: 15000, suffix: "+", label: "Products" },
@@ -46,6 +47,8 @@ const Home = () => {
   const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const [featuredPage, setFeaturedPage] = useState(0);
+  const { data: products = [] } = useProducts();
+  const { data: categories = [] } = useCategories();
   const featured = products.slice(0, 8);
   const perPage = 4;
   const pages = Math.ceil(featured.length / perPage);
@@ -95,14 +98,13 @@ const Home = () => {
         </AnimatedSection>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map((cat, i) => (
-            <AnimatedSection key={cat.name} delay={i * 0.08}>
+            <AnimatedSection key={cat.id} delay={i * 0.08}>
               <Link to="/shop" className="group block rounded-2xl overflow-hidden relative aspect-[4/5] card-3d">
-                <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <img src={cat.image_url || "/placeholder.svg"} alt={cat.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <span className="text-2xl mb-1 block">{cat.icon}</span>
                   <h3 className="font-display font-bold text-sm">{cat.name}</h3>
-                  <p className="text-[10px] text-muted-foreground">{cat.count} products</p>
                 </div>
               </Link>
             </AnimatedSection>
@@ -118,21 +120,29 @@ const Home = () => {
               <h2 className="font-display text-3xl md:text-4xl font-bold">Featured <span className="gradient-text">Products</span></h2>
               <p className="text-muted-foreground mt-2">Hand-picked quality products at the best prices</p>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => setFeaturedPage(p => Math.max(0, p - 1))} disabled={featuredPage === 0} className="p-2 rounded-lg border border-border hover:bg-secondary disabled:opacity-30 transition-colors">
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button onClick={() => setFeaturedPage(p => Math.min(pages - 1, p + 1))} disabled={featuredPage >= pages - 1} className="p-2 rounded-lg border border-border hover:bg-secondary disabled:opacity-30 transition-colors">
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
+            {pages > 1 && (
+              <div className="flex gap-2">
+                <button onClick={() => setFeaturedPage(p => Math.max(0, p - 1))} disabled={featuredPage === 0} className="p-2 rounded-lg border border-border hover:bg-secondary disabled:opacity-30 transition-colors">
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button onClick={() => setFeaturedPage(p => Math.min(pages - 1, p + 1))} disabled={featuredPage >= pages - 1} className="p-2 rounded-lg border border-border hover:bg-secondary disabled:opacity-30 transition-colors">
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
         </AnimatedSection>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featured.slice(featuredPage * perPage, featuredPage * perPage + perPage).map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
-          ))}
-        </div>
+        {products.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featured.slice(featuredPage * perPage, featuredPage * perPage + perPage).map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            <p>No products yet. Add products from the admin panel.</p>
+          </div>
+        )}
         <div className="text-center mt-10">
           <Link to="/shop" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border text-foreground font-medium hover:bg-secondary transition-colors">
             View All Products <ArrowRight className="w-4 h-4" />
@@ -140,7 +150,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stats / Counters */}
+      {/* Stats */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5" />
         <div className="container mx-auto px-4 relative z-10">
