@@ -1,17 +1,50 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Wrench } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPw, setShowPw] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: isLogin ? "Welcome back!" : "Account created!", description: "This is a demo UI" });
+    if (!form.email || !form.password) {
+      toast({ title: "Please fill all fields", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      if (isLogin) {
+        const { error } = await signIn(form.email, form.password);
+        if (error) {
+          toast({ title: "Login failed", description: error.message, variant: "destructive" });
+        } else {
+          toast({ title: "Welcome back!" });
+          navigate("/");
+        }
+      } else {
+        if (!form.name) {
+          toast({ title: "Please enter your name", variant: "destructive" });
+          setLoading(false);
+          return;
+        }
+        const { error } = await signUp(form.email, form.password, form.name);
+        if (error) {
+          toast({ title: "Signup failed", description: error.message, variant: "destructive" });
+        } else {
+          toast({ title: "Account created!", description: "Please check your email to verify your account." });
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,9 +79,8 @@ const Login = () => {
               {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
-          {isLogin && <div className="text-right"><button type="button" className="text-xs text-primary hover:underline">Forgot Password?</button></div>}
-          <button type="submit" className="w-full py-3 rounded-xl gradient-primary text-primary-foreground font-semibold shadow-glow btn-ripple flex items-center justify-center gap-2">
-            {isLogin ? "Sign In" : "Create Account"} <ArrowRight className="w-4 h-4" />
+          <button type="submit" disabled={loading} className="w-full py-3 rounded-xl gradient-primary text-primary-foreground font-semibold shadow-glow btn-ripple flex items-center justify-center gap-2 disabled:opacity-50">
+            {loading ? <div className="animate-spin w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full" /> : <>{isLogin ? "Sign In" : "Create Account"} <ArrowRight className="w-4 h-4" /></>}
           </button>
         </form>
 
