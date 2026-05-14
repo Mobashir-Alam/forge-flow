@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { AdminRoute } from "@/components/ProtectedRoute";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -26,6 +27,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminTheme from "./pages/admin/AdminTheme";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +37,7 @@ const App = () => (
       <Toaster />
       <BrowserRouter>
         <AuthProvider>
+          <ThemeProvider>
           <CartProvider>
             <Navbar />
             <CartDrawer />
@@ -56,11 +59,13 @@ const App = () => (
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="theme" element={<AdminTheme />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
           </CartProvider>
+          </ThemeProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

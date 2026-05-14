@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, Package, FolderTree, ShoppingBag, Users, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, ShoppingBag, Users, ArrowLeft, Palette } from "lucide-react";
 
 const adminLinks = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
@@ -7,6 +7,7 @@ const adminLinks = [
   { label: "Categories", path: "/admin/categories", icon: FolderTree },
   { label: "Orders", path: "/admin/orders", icon: ShoppingBag },
   { label: "Users", path: "/admin/users", icon: Users },
+  { label: "Theme", path: "/admin/theme", icon: Palette },
 ];
 
 const AdminLayout = () => {
