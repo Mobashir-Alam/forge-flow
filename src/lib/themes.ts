@@ -423,6 +423,107 @@ export const THEMES: Theme[] = [
 
 export const DEFAULT_THEME_ID = "modern-dark";
 
+export const CUSTOM_THEME_ID = "custom";
+
+export function buildCustomTheme(tokens: ThemeTokens, opts?: { mode?: "light" | "dark"; gradientPrimary?: string; shadowGlow?: string }): Theme {
+  return {
+    id: CUSTOM_THEME_ID,
+    name: "Custom Theme",
+    description: "Your custom palette",
+    mode: opts?.mode ?? "dark",
+    preview: [
+      `hsl(${tokens.background})`,
+      `hsl(${tokens.card})`,
+      `hsl(${tokens.primary})`,
+      `hsl(${tokens.accent})`,
+    ],
+    tokens,
+    gradientPrimary: opts?.gradientPrimary ?? `linear-gradient(135deg, hsl(${tokens.primary}), hsl(${tokens.accent}))`,
+    shadowGlow: opts?.shadowGlow ?? `0 0 30px hsl(${tokens.primary} / 0.25)`,
+  };
+}
+
+export const TOKEN_LABELS: { key: keyof ThemeTokens; label: string; group: string }[] = [
+  { key: "background", label: "Page Background", group: "Surfaces" },
+  { key: "foreground", label: "Body Text", group: "Surfaces" },
+  { key: "card", label: "Card Background", group: "Surfaces" },
+  { key: "card-foreground", label: "Card Text", group: "Surfaces" },
+  { key: "popover", label: "Popover Background", group: "Surfaces" },
+  { key: "popover-foreground", label: "Popover Text", group: "Surfaces" },
+  { key: "primary", label: "Primary", group: "Brand" },
+  { key: "primary-foreground", label: "Primary Text", group: "Brand" },
+  { key: "accent", label: "Accent", group: "Brand" },
+  { key: "accent-foreground", label: "Accent Text", group: "Brand" },
+  { key: "secondary", label: "Secondary", group: "Brand" },
+  { key: "secondary-foreground", label: "Secondary Text", group: "Brand" },
+  { key: "muted", label: "Muted Background", group: "Muted" },
+  { key: "muted-foreground", label: "Muted Text", group: "Muted" },
+  { key: "destructive", label: "Destructive", group: "States" },
+  { key: "destructive-foreground", label: "Destructive Text", group: "States" },
+  { key: "border", label: "Border", group: "Borders & Inputs" },
+  { key: "input", label: "Input Border", group: "Borders & Inputs" },
+  { key: "ring", label: "Focus Ring", group: "Borders & Inputs" },
+  { key: "sidebar-background", label: "Sidebar/Navbar BG", group: "Sidebar" },
+  { key: "sidebar-foreground", label: "Sidebar Text", group: "Sidebar" },
+  { key: "sidebar-primary", label: "Sidebar Primary", group: "Sidebar" },
+  { key: "sidebar-primary-foreground", label: "Sidebar Primary Text", group: "Sidebar" },
+  { key: "sidebar-accent", label: "Sidebar Accent", group: "Sidebar" },
+  { key: "sidebar-accent-foreground", label: "Sidebar Accent Text", group: "Sidebar" },
+  { key: "sidebar-border", label: "Sidebar Border", group: "Sidebar" },
+  { key: "sidebar-ring", label: "Sidebar Ring", group: "Sidebar" },
+];
+
+// HSL "h s% l%" <-> hex helpers
+export function hslStringToHex(hsl: string): string {
+  const m = hsl.trim().match(/(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)%\s+(-?\d+(?:\.\d+)?)%/);
+  if (!m) return "#000000";
+  let h = parseFloat(m[1]) / 360;
+  let s = parseFloat(m[2]) / 100;
+  let l = parseFloat(m[3]) / 100;
+  const hue2rgb = (p: number, q: number, t: number) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  let r: number, g: number, b: number;
+  if (s === 0) {
+    r = g = b = l;
+  } else {
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+  const toHex = (x: number) => Math.round(x * 255).toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+export function hexToHslString(hex: string): string {
+  let c = hex.replace("#", "");
+  if (c.length === 3) c = c.split("").map((ch) => ch + ch).join("");
+  const r = parseInt(c.substring(0, 2), 16) / 255;
+  const g = parseInt(c.substring(2, 4), 16) / 255;
+  const b = parseInt(c.substring(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
 export function getThemeById(id: string | null | undefined): Theme {
   return THEMES.find((t) => t.id === id) ?? THEMES[0];
 }

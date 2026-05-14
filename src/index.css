@@ -75,16 +75,16 @@
     @apply bg-card/80 backdrop-blur-2xl border border-border/50;
   }
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(38 95% 55%), hsl(25 90% 52%));
+    background: var(--gradient-primary);
   }
   .gradient-text {
-    background: linear-gradient(135deg, hsl(38 95% 55%), hsl(25 90% 52%));
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .shadow-glow {
-    box-shadow: 0 0 30px hsl(38 95% 55% / 0.15);
+    box-shadow: var(--shadow-glow);
   }
   .shadow-card {
     box-shadow: 0 8px 32px hsl(0 0% 0% / 0.3);
