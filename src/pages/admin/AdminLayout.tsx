@@ -1,10 +1,11 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, Package, FolderTree, ShoppingBag, Users, ArrowLeft, Palette } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, ShoppingBag, Users, ArrowLeft, Palette, Warehouse } from "lucide-react";
 
 const adminLinks = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
   { label: "Products", path: "/admin/products", icon: Package },
   { label: "Categories", path: "/admin/categories", icon: FolderTree },
+  { label: "Inventory", path: "/admin/inventory", icon: Warehouse },
   { label: "Orders", path: "/admin/orders", icon: ShoppingBag },
   { label: "Users", path: "/admin/users", icon: Users },
   { label: "Theme", path: "/admin/theme", icon: Palette },

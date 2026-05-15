@@ -233,12 +233,14 @@ export type Database = {
         Row: {
           badge: string | null
           category_id: string | null
+          cost_price: number | null
           created_at: string
           description: string | null
           id: string
           image_url: string | null
           is_active: boolean | null
           name: string
+          offline_sold: number | null
           original_price: number | null
           price: number
           rating: number | null
@@ -249,12 +251,14 @@ export type Database = {
         Insert: {
           badge?: string | null
           category_id?: string | null
+          cost_price?: number | null
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
           name: string
+          offline_sold?: number | null
           original_price?: number | null
           price: number
           rating?: number | null
@@ -265,12 +269,14 @@ export type Database = {
         Update: {
           badge?: string | null
           category_id?: string | null
+          cost_price?: number | null
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
           name?: string
+          offline_sold?: number | null
           original_price?: number | null
           price?: number
           rating?: number | null
