@@ -1,17 +1,24 @@
 import { Link } from "react-router-dom";
-import { Wrench, Phone, Mail, MapPin, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
 const Footer = () => (
   <footer className="bg-card border-t border-border/40 mt-20">
     <div className="container mx-auto px-4 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         <div>
-          <Link to="/" className="flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center">
-              <Wrench className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="font-display text-xl font-bold">
-              <span className="gradient-text">Build</span>Mart
+          <Link to="/" className="flex items-center mb-4">
+            <span
+              className="font-display text-2xl font-black tracking-tight whitespace-nowrap"
+              style={{
+                backgroundImage:
+                  "linear-gradient(135deg, #ff1e1e 0%, #ff5a36 45%, #b80000 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                filter: "drop-shadow(0 2px 8px rgba(255, 30, 30, 0.35))",
+              }}
+            >
+              Raj Hardware
             </span>
           </Link>
           <p className="text-muted-foreground text-sm leading-relaxed">
@@ -45,13 +52,13 @@ const Footer = () => (
           <h4 className="font-display font-semibold mb-4">Contact</h4>
           <div className="flex flex-col gap-3 text-sm text-muted-foreground">
             <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> +91 98765 43210</div>
-            <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> info@buildmart.com</div>
+            <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> info@rajhardware.com</div>
             <div className="flex items-start gap-2"><MapPin className="w-4 h-4 text-primary mt-0.5" /> 123 Industrial Area, Construction Hub, India</div>
           </div>
         </div>
       </div>
       <div className="border-t border-border/40 mt-10 pt-6 text-center text-xs text-muted-foreground">
-        © 2025 BuildMart. All rights reserved.
+        © 2025 Raj Hardware. All rights reserved.
       </div>
     </div>
   </footer>
