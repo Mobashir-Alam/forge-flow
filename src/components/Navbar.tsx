@@ -42,7 +42,7 @@ const Navbar = () => {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="font-display text-2xl md:text-3xl font-black tracking-tight leading-none"
+            className="font-display text-lg sm:text-xl md:text-2xl font-black tracking-tight leading-none whitespace-nowrap"
             style={{
               backgroundImage:
                 "linear-gradient(135deg, #ff1e1e 0%, #ff5a36 45%, #b80000 100%)",
@@ -57,9 +57,9 @@ const Navbar = () => {
               whileHover={{ rotate: -4, scale: 1.08 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              R
+              Raj
             </motion.span>
-            aj{" "}
+            &nbsp;
             <motion.span
               className="inline-block"
               animate={{ y: [0, -2, 0] }}
