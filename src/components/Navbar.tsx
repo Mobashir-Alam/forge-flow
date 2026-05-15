@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, Heart, Menu, X, Search, User, Wrench, LogOut, Shield } from "lucide-react";
+import { ShoppingCart, Heart, Menu, X, Search, User, LogOut, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -37,14 +37,37 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
-            <Wrench className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <span className="font-display text-xl font-bold tracking-tight">
-            <span className="gradient-text">Build</span>
-            <span className="text-foreground">Mart</span>
-          </span>
+        <Link to="/" className="flex items-center group">
+          <motion.span
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="font-display text-2xl md:text-3xl font-black tracking-tight leading-none"
+            style={{
+              backgroundImage:
+                "linear-gradient(135deg, #ff1e1e 0%, #ff5a36 45%, #b80000 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              filter: "drop-shadow(0 2px 8px rgba(255, 30, 30, 0.35))",
+            }}
+          >
+            <motion.span
+              className="inline-block"
+              whileHover={{ rotate: -4, scale: 1.08 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              R
+            </motion.span>
+            aj{" "}
+            <motion.span
+              className="inline-block"
+              animate={{ y: [0, -2, 0] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+            >
+              Hardware
+            </motion.span>
+          </motion.span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
