@@ -50,6 +50,84 @@ export type Database = {
         }
         Relationships: []
       }
+      invoices: {
+        Row: {
+          cgst: number
+          cgst_rate: number
+          created_at: string
+          customer_address: string | null
+          customer_gstin: string | null
+          customer_name: string
+          customer_state: string | null
+          customer_state_code: string | null
+          freight: number
+          grand_total: number
+          id: string
+          igst: number
+          igst_rate: number
+          invoice_date: string
+          invoice_no: string
+          items: Json
+          sgst: number
+          sgst_rate: number
+          sub_total: number
+          taxable: number
+          transport: string | null
+          updated_at: string
+          vehicle_no: string | null
+        }
+        Insert: {
+          cgst?: number
+          cgst_rate?: number
+          created_at?: string
+          customer_address?: string | null
+          customer_gstin?: string | null
+          customer_name: string
+          customer_state?: string | null
+          customer_state_code?: string | null
+          freight?: number
+          grand_total?: number
+          id?: string
+          igst?: number
+          igst_rate?: number
+          invoice_date?: string
+          invoice_no: string
+          items?: Json
+          sgst?: number
+          sgst_rate?: number
+          sub_total?: number
+          taxable?: number
+          transport?: string | null
+          updated_at?: string
+          vehicle_no?: string | null
+        }
+        Update: {
+          cgst?: number
+          cgst_rate?: number
+          created_at?: string
+          customer_address?: string | null
+          customer_gstin?: string | null
+          customer_name?: string
+          customer_state?: string | null
+          customer_state_code?: string | null
+          freight?: number
+          grand_total?: number
+          id?: string
+          igst?: number
+          igst_rate?: number
+          invoice_date?: string
+          invoice_no?: string
+          items?: Json
+          sgst?: number
+          sgst_rate?: number
+          sub_total?: number
+          taxable?: number
+          transport?: string | null
+          updated_at?: string
+          vehicle_no?: string | null
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
