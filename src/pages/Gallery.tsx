@@ -32,7 +32,7 @@ const Gallery = () => {
   const currentUrl = useMemo(() => {
     if (typeof window === "undefined") return "";
     const base = `${window.location.origin}/gallery`;
-    return selectedCategory ? `${base}?category=${selectedCategory.slug || selectedCategory.id}` : base;
+    return selectedCategory ? `${base}?category=${selectedCategory.id}` : base;
   }, [selectedCategory]);
 
   useEffect(() => {
