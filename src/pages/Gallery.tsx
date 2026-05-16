@@ -228,9 +228,9 @@ const Gallery = () => {
                       <p className="text-xs text-primary font-semibold mt-0.5">
                         ₹{Number(item.price).toLocaleString()}
                       </p>
-                      {item.sku && (
-                        <p className="text-[10px] text-muted-foreground mt-1 font-mono line-clamp-1">
-                          {item.sku}
+                      {item.badge && (
+                        <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1">
+                          {item.badge}
                         </p>
                       )}
                     </div>
@@ -275,8 +275,8 @@ const Gallery = () => {
                 {selectedItem.description && (
                   <p className="text-sm text-muted-foreground line-clamp-3">{selectedItem.description}</p>
                 )}
-                {selectedItem.sku && (
-                  <p className="text-xs text-muted-foreground font-mono pt-1">SKU: {selectedItem.sku}</p>
+                {selectedItem.badge && (
+                  <p className="text-xs text-muted-foreground pt-1">{selectedItem.badge}</p>
                 )}
                 <Link
                   to={`/product/${selectedItem.id}`}
